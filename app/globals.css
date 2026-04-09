@@ -80,3 +80,51 @@
     scrollbar-width: none;
   }
 }
+
+/* Force light mode only */
+:root {
+  color-scheme: light;
+}
+
+/* Blinking cursor for streaming */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Token fade-in for new streaming words */
+@keyframes tokenIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-token-in {
+  animation: tokenIn 0.25s ease-out both;
+}
+
+/* Shimmer skeleton for searching cards */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--accent)) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Fade-in slide-up for new messages */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.25s ease-out both;
+}
