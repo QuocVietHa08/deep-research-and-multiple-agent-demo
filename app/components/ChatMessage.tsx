@@ -6,7 +6,7 @@ import { SectionCardGrid } from "./SectionCardGrid";
 import type { ResearchSectionCardData } from "./ResearchSectionCard";
 
 type Phase = "idle" | "researching" | "editing" | "assembling" | "done";
-type Mode = "agent" | "deepresearch";
+type Mode = "agent" | "deepresearch" | "canvas";
 
 type ChatUserMessage = {
   id: string;
@@ -73,6 +73,28 @@ function StreamingText({ text, isStreaming }: { text: string; isStreaming: boole
   );
 }
 
+// Avatar + label configs per mode
+const MODE_CONFIG: Record<
+  Mode,
+  { initials: string; gradient: string; label: string }
+> = {
+  agent: {
+    initials: "RA",
+    gradient: "from-indigo-500 to-violet-600",
+    label: "Research Assistant",
+  },
+  deepresearch: {
+    initials: "DR",
+    gradient: "from-blue-500 to-indigo-600",
+    label: "Deep Research",
+  },
+  canvas: {
+    initials: "CA",
+    gradient: "from-violet-500 to-fuchsia-600",
+    label: "Canvas Assistant",
+  },
+};
+
 export function ChatMessage({ message, activeBotId }: ChatMessageProps) {
   // --- User message ---
   if (message.role === "user") {
@@ -98,12 +120,16 @@ export function ChatMessage({ message, activeBotId }: ChatMessageProps) {
 
   const showCards = bot.mode === "deepresearch" && bot.cards.length > 0;
 
+  const modeConfig = MODE_CONFIG[bot.mode] ?? MODE_CONFIG.agent;
+
   return (
     <div className="flex justify-start gap-3 animate-fade-in-up">
       {/* Avatar */}
       <div className="flex-shrink-0 mt-1">
-        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-[10px] font-bold select-none">
-          RA
+        <div
+          className={`h-7 w-7 rounded-full bg-gradient-to-br ${modeConfig.gradient} flex items-center justify-center text-white text-[10px] font-bold select-none`}
+        >
+          {modeConfig.initials}
         </div>
       </div>
 
@@ -111,8 +137,14 @@ export function ChatMessage({ message, activeBotId }: ChatMessageProps) {
       <div className="flex-1 min-w-0 space-y-3">
         {/* Name + phase badge */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm font-semibold text-foreground">Research Assistant</span>
-          <PhaseBadge phase={bot.phase} isActive={isActive} />
+          <span className="text-sm font-semibold text-foreground">{modeConfig.label}</span>
+          {bot.mode !== "canvas" && <PhaseBadge phase={bot.phase} isActive={isActive} />}
+          {bot.mode === "canvas" && isActive && bot.phase !== "done" && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200 font-medium flex items-center gap-1">
+              <span className="animate-pulse">Writing</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
+            </span>
+          )}
         </div>
 
         {/* Section cards grid */}

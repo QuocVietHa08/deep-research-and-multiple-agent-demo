@@ -15,6 +15,16 @@ type InputBarProps = {
   onClear: () => void;
 };
 
+const MODE_LABELS: Record<Mode, string> = {
+  agent: "Agent",
+  deepresearch: "Deep Research",
+};
+
+const MODE_PLACEHOLDERS: Record<Mode, string> = {
+  agent: "Ask anything…",
+  deepresearch: "Enter a research topic…",
+};
+
 export function InputBar({
   topic,
   mode,
@@ -34,15 +44,9 @@ export function InputBar({
           "transition-shadow duration-200",
         )}
       >
-        {/* TOP: mode toggles + clear */}
-
         {/* MIDDLE: auto-grow textarea */}
         <textarea
-          placeholder={
-            mode === "deepresearch"
-              ? "Enter a research topic..."
-              : "Ask anything..."
-          }
+          placeholder={MODE_PLACEHOLDERS[mode]}
           value={topic}
           onChange={(e) => {
             onTopicChange(e.target.value);
@@ -60,9 +64,10 @@ export function InputBar({
           className="w-full resize-none bg-transparent px-4 py-3 text-sm leading-6 placeholder:text-muted-foreground focus:outline-none min-h-[56px] max-h-[240px] overflow-y-auto"
         />
 
-        {/* BOTTOM: send/stop button */}
+        {/* BOTTOM: mode toggles + clear + send/stop */}
         <div className="flex items-center justify-between px-3 pb-3 pt-1">
-          <div className="flex items-center gap-2">
+          {/* Mode selector */}
+          <div className="flex items-center gap-2 flex-wrap">
             {(["agent", "deepresearch"] as Mode[]).map((m) => (
               <button
                 key={m}
@@ -75,10 +80,12 @@ export function InputBar({
                     : "bg-transparent text-muted-foreground border-border hover:border-primary/40 hover:text-foreground",
                 )}
               >
-                {m === "agent" ? "Agent" : "Deep Research"}
+                {MODE_LABELS[m]}
               </button>
             ))}
           </div>
+
+          {/* Right side: clear + send/stop */}
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 px-3 pt-3">
               <button
@@ -90,31 +97,30 @@ export function InputBar({
               </button>
             </div>
 
-             {running ? (
-            <button
-              type="button"
-              onClick={onStop}
-              className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"
-              aria-label="Stop"
-            >
-              <svg viewBox="0 0 16 16" className="h-3 w-3 fill-current">
-                <rect x="3" y="3" width="10" height="10" rx="1" />
-              </svg>
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={!topic.trim()}
-              className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-40 hover:bg-primary/90 transition-colors"
-              aria-label="Send"
-            >
-              <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 fill-current">
-                <path d="M8 2l6 6H9v6H7V8H2z" />
-              </svg>
-            </button>
-          )}
+            {running ? (
+              <button
+                type="button"
+                onClick={onStop}
+                className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"
+                aria-label="Stop"
+              >
+                <svg viewBox="0 0 16 16" className="h-3 w-3 fill-current">
+                  <rect x="3" y="3" width="10" height="10" rx="1" />
+                </svg>
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={!topic.trim()}
+                className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-40 hover:bg-primary/90 transition-colors"
+                aria-label="Send"
+              >
+                <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 fill-current">
+                  <path d="M8 2l6 6H9v6H7V8H2z" />
+                </svg>
+              </button>
+            )}
           </div>
-         
         </div>
       </div>
     </form>

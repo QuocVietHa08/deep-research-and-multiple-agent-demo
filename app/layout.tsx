@@ -1,5 +1,7 @@
 import "./globals.css";
 import "flowtoken/dist/styles.css";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
 import { Public_Sans } from "next/font/google";
 import { ActiveLink } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
