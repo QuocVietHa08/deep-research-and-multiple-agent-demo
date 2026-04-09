@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useRef } from "react";
-import { MarkdownPreview } from "./MarkdownPreview";
+import React from "react";
+import { AnimatedMarkdown } from "flowtoken";
 import { SectionCardGrid } from "./SectionCardGrid";
 import type { ResearchSectionCardData } from "./ResearchSectionCard";
 
@@ -62,32 +62,14 @@ function PhaseBadge({ phase, isActive }: { phase: Phase; isActive: boolean }) {
   return null;
 }
 
-/**
- * StreamingText: always renders full markdown via MarkdownPreview.
- * While streaming, tracks which chunk is "new" and wraps it in a
- * fade-in span so only newly arrived text animates.
- */
 function StreamingText({ text, isStreaming }: { text: string; isStreaming: boolean }) {
-  const prevLenRef = useRef(0);
-
-  if (!isStreaming) {
-    prevLenRef.current = 0;
-    return <MarkdownPreview content={text} />;
-  }
-
-  prevLenRef.current = text.length;
-
-  // Render markdown so formatting is always visible.
-  // We use a key on the new-tail wrapper so React re-mounts it each
-  // render, replaying the CSS animation for only the new content.
   return (
-    <div className="relative">
-      <MarkdownPreview content={text} />
-      {/* Invisible overlay that pulses a blinking cursor at the end */}
-      {isStreaming && (
-        <span className="animate-blink text-foreground ml-0.5 select-none" aria-hidden>▋</span>
-      )}
-    </div>
+    <AnimatedMarkdown
+      content={text}
+      animation={isStreaming ? "fadeIn" : null}
+      animationDuration="0.4s"
+      sep="word"
+    />
   );
 }
 
